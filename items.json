@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Bolt-01",
+    "type": "Futuristic",
+    "rarity": 5,
+    "desc": "Prototype léger avec visuel néon.",
+    "tags": [
+      "énergie",
+      "prototype"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Classic-9",
+    "type": "Classic",
+    "rarity": 3,
+    "desc": "Design sobre, ergonomique.",
+    "tags": [
+      "acier",
+      "compact"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Retro-X",
+    "type": "Retro",
+    "rarity": 2,
+    "desc": "Esthétique vintage, textures patinées.",
+    "tags": [
+      "vintage",
+      "collection"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Nova-S",
+    "type": "Futuristic",
+    "rarity": 4,
+    "desc": "Système modulaire et compact.",
+    "tags": [
+      "futur",
+      "haute-tech"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Mini-R",
+    "type": "Classic",
+    "rarity": 1,
+    "desc": "Petit format, facile à porter.",
+    "tags": [
+      "léger",
+      "quotidien"
+    ]
+  }
+]
