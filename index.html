@@ -1,155 +1,64 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>guns.lol style — Démo</title>
-  <meta name="description" content="Clone simple de guns.lol — galerie interactive avec recherche, filtres et modal, hébergé sur GitHub Pages.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site vidéo + musique</title>
   <style>
-    :root{
-      --bg:#0f1724; --card:#0b1220; --accent:#22c1c3; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
-      --radius:14px;
-      --maxw:1100px;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    /* Styles globaux */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: Arial, sans-serif; overflow: hidden; }
+
+    /* Vidéo en arrière-plan */
+    video#bg-video {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071023 0%, #071827 100%);color:#e6eef6}
-    .wrap{max-width:var(--maxw);margin:28px auto;padding:20px}
-    header{display:flex;align-items:center;gap:16px}
-    .logo{width:60px;height:60px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7b61ff);display:flex;align-items:center;justify-content:center;font-weight:700}
-    h1{margin:0;font-size:20px}
-    p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
 
-    .controls{display:flex;gap:12px;margin:18px 0;flex-wrap:wrap}
-    .search{flex:1;min-width:220px}
-    input, select{width:100%;padding:10px 12px;border-radius:10px;border:0;background:var(--glass);color:inherit;outline:2px solid transparent}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    /* Contenu centré */
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      text-align: center;
+      background: rgba(0,0,0,0.4); /* optionnel : léger fond pour lisibilité */
+      padding: 20px 40px;
+      border-radius: 12px;
+    }
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.6);cursor:pointer;transition:transform .15s}
-    .card:hover{transform:translateY(-6px)}
-    .thumb{height:120px;border-radius:8px;background:linear-gradient(180deg,#15202b,#0d1318);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600;margin-bottom:10px}
-    .meta{display:flex;justify-content:space-between;align-items:center}
-    .tags{font-size:12px;color:var(--muted)}
-    .price{font-weight:700}
-
-    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;padding:20px}
-    .modal{width:100%;max-width:760px;background:linear-gradient(180deg,#08101a,#07111a);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03)}
-    .modal .row{display:flex;gap:16px}
-    .modal .thumb-lg{flex:0 0 260px;height:180px;border-radius:10px;background:linear-gradient(135deg,#081a24,#0b1220);display:flex;align-items:center;justify-content:center}
-    .close{margin-left:auto;cursor:pointer}
-
-    footer{margin:28px 0 80px;color:var(--muted);font-size:13px;text-align:center}
-
-    @media (max-width:640px){.modal .row{flex-direction:column}.modal .thumb-lg{width:100%;height:160px}}
+    h1 { font-size: 3rem; margin-bottom: 10px; }
+    p { font-size: 1.2rem; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">GL</div>
-      <div>
-        <h1>guns.lol — Clone démo</h1>
-        <p class="lead">Catalogue interactif — recherche rapide, filtre, aperçu. Déployable sur GitHub Pages.</p>
-      </div>
-    </header>
 
-    <div class="controls">
-      <div class="search"><input id="q" placeholder="Recherche (nom, type...)"></div>
-      <div style="width:180px"><select id="typeFilter"><option value="">Tous les types</option><option>Classic</option><option>Futuristic</option><option>Retro</option></select></div>
-      <div style="width:140px"><select id="sort"><option value="name">Trier: Nom</option><option value="rarity">Trier: Rareté</option></select></div>
-    </div>
+  <!-- Vidéo de fond -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="video.mp4" type="video/mp4">
+    Votre navigateur ne supporte pas la vidéo HTML5.
+  </video>
 
-    <main>
-      <div id="grid" class="grid" aria-live="polite"></div>
-    </main>
+  <!-- Musique de fond -->
+  <audio autoplay loop>
+    <source src="music.mp3" type="audio/mpeg">
+    Votre navigateur ne supporte pas l'audio HTML5.
+  </audio>
 
-    <div class="modal-back" id="modalBack" role="dialog" aria-modal="true">
-      <div class="modal" id="modal">
-        <div style="display:flex;align-items:center;gap:12px">
-          <strong id="m-title">Titre</strong>
-          <span class="tags" id="m-type">Type</span>
-          <span class="close" id="m-close">✕</span>
-        </div>
-        <div class="row" style="margin-top:12px">
-          <div class="thumb-lg" id="m-thumb">Image</div>
-          <div style="flex:1">
-            <p id="m-desc" style="color:var(--muted);margin:0 0 8px"></p>
-            <p style="margin:10px 0"><strong>Rareté:</strong> <span id="m-rarity">Common</span></p>
-            <p style="margin:10px 0"><strong>Tags:</strong> <span id="m-tags">—</span></p>
-            <div style="margin-top:14px"><button id="m-open" style="padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#021018;cursor:pointer">Voir plus</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      Démo — site statique hébergé sur GitHub Pages. Personnalisez les couleurs, les données et le logo.
-    </footer>
+  <!-- Contenu centré -->
+  <div class="overlay">
+    <h1>Bienvenue sur mon site</h1>
+    <p>Voici quelques infos importantes au centre de l’écran</p>
   </div>
 
-  <script>
-    async function fetchItems(){
-      try {
-        const res = await fetch('items.json');
-        if(!res.ok) throw new Error('items.json non trouvé');
-        const data = await res.json();
-        return data;
-      } catch (e) {
-        console.error(e);
-        return [];
-      }
-    }
-
-    const grid = document.getElementById('grid');
-    const q = document.getElementById('q');
-    const typeFilter = document.getElementById('typeFilter');
-    const sort = document.getElementById('sort');
-    let items = [];
-
-    function render(list){
-      grid.innerHTML = '';
-      if(list.length===0){grid.innerHTML = '<div style="color:var(--muted)">Aucun résultat</div>';return}
-      list.forEach(it => {
-        const el = document.createElement('article'); el.className='card';
-        el.innerHTML = `
-          <div class="thumb">${it.name}</div>
-          <div style="margin-bottom:8px"><strong>${it.name}</strong></div>
-          <div class="meta"><div class="tags">${it.type}</div><div class="price">★ ${it.rarity}</div></div>
-        `;
-        el.addEventListener('click', ()=>openModal(it));
-        grid.appendChild(el);
-      });
-    }
-
-    function openModal(it){
-      document.getElementById('m-title').textContent = it.name;
-      document.getElementById('m-type').textContent = it.type;
-      document.getElementById('m-desc').textContent = it.desc;
-      document.getElementById('m-rarity').textContent = it.rarity;
-      document.getElementById('m-tags').textContent = (it.tags || []).join(', ');
-      document.getElementById('m-thumb').textContent = it.name;
-      document.getElementById('modalBack').style.display = 'flex';
-    }
-
-    document.getElementById('m-close').addEventListener('click', ()=>{document.getElementById('modalBack').style.display='none'});
-    document.getElementById('modalBack').addEventListener('click', (e)=>{ if(e.target.id==='modalBack') e.target.style.display='none' });
-
-    function filterAndRender(){
-      const term = q.value.trim().toLowerCase();
-      let out = items.slice();
-      if(typeFilter.value) out = out.filter(x=>x.type===typeFilter.value);
-      if(term) out = out.filter(x=> x.name.toLowerCase().includes(term) || x.desc.toLowerCase().includes(term) || x.type.toLowerCase().includes(term));
-      if(sort.value==='rarity') out.sort((a,b)=>b.rarity - a.rarity); else out.sort((a,b)=> a.name.localeCompare(b.name));
-      render(out);
-    }
-
-    q.addEventListener('input', filterAndRender);
-    typeFilter.addEventListener('change', filterAndRender);
-    sort.addEventListener('change', filterAndRender);
-
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') document.getElementById('modalBack').style.display='none' });
-
-    fetchItems().then(data => { items = data; filterAndRender(); });
-  </script>
 </body>
 </html>
